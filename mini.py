@@ -52,8 +52,14 @@ model.compile(loss='categorical_crossentropy', optimizer='adam')
 # Train the model
 model.fit(x_train, y_train, batch_size=128, epochs=50)
 
+# Train the model
+model.fit(x_train, y_train, batch_size=128, epochs=50)
+
+# Save the trained model
+model.save("helpsteer_model.h5")
+
 # Generate text using the trained model
-def generate_text(prompt, num_words, temperature=1.0):
+def generate_text(prompt, num_words, temperature=1.0, model=None):
     input_sequence = tokenizer.texts_to_sequences([prompt])[0]
     input_sequence = pad_sequences([input_sequence], maxlen=max_length)
 
@@ -77,5 +83,18 @@ prompt = "What are the three most important things to consider when deciding wha
 num_words = 50
 temperature = 0.8
 generated_response = generate_text(prompt, num_words, temperature)
+print("Prompt:", prompt)
+print("Generated Response:", generated_response)
+
+# Load the trained model
+from keras.models import load_model
+
+loaded_model = load_model("helpsteer_model.h5")
+
+# Generate text based on a prompt
+prompt = "What are the three most important things to consider when deciding what technology to use to build an assist device to help an elderly person with basic needs?"
+num_words = 50
+temperature = 0.8
+generated_response = generate_text(prompt, num_words, temperature, loaded_model)
 print("Prompt:", prompt)
 print("Generated Response:", generated_response)
