@@ -1,20 +1,24 @@
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense, LSTM, Embedding
+from keras.layers import Dense, LSTM, Embedding, Dropout
 from keras_preprocessing.text import Tokenizer
 from keras_preprocessing.sequence import pad_sequences
 from training_data import texts
 
 # Define the model hyperparameters
-vocab_size = 500000  # Maximum vocabulary size
-max_length = 100  # Maximum sequence length
-embedding_size = 100  # Embedding dimension
-lstm_units = 128  # Number of LSTM units
+vocab_size = 10000  # Reduced vocabulary size
+max_length = 50  # Reduced maximum sequence length
+embedding_size = 128  # Increased embedding dimension
+lstm_units = 256  # Increased number of LSTM units
+dropout_rate = 0.2  # Added dropout rate
 
 # Define the model architecture
 model = Sequential([
     Embedding(vocab_size, embedding_size, input_shape=(max_length,)),
+    LSTM(lstm_units, return_sequences=True),
+    Dropout(dropout_rate),  # Added dropout layer
     LSTM(lstm_units),
+    Dropout(dropout_rate),  # Added dropout layer
     Dense(vocab_size, activation='softmax')
 ])
 
@@ -32,26 +36,31 @@ for i, seq in enumerate(sequences):
         y_train[i, seq[j]] = 1
 
 # Train the model
-model.fit(x_train, y_train, batch_size=128, epochs=10)
+model.fit(x_train, y_train, batch_size=128, epochs=200)  # Increased number of epochs
 
 # Generate text using the trained model
-seed_text = "A"
-generated_text = seed_text
-for _ in range(20):  # Generate 20 words
-    token_list = tokenizer.texts_to_sequences([generated_text])[0]
-    token_list = pad_sequences([token_list], maxlen=max_length, padding='pre')
-    predicted_probs = model.predict(token_list, verbose=0)
-    predicted_token = np.argmax(predicted_probs, axis=-1)[0]
+def generate_text(seed_text, num_words, temperature=1.0):
+    generated_text = seed_text
+    input_sequence = tokenizer.texts_to_sequences([seed_text])[0]
+    input_sequence = pad_sequences([input_sequence], maxlen=max_length)
 
-    # Map the predicted token back to a word
-    output_word = tokenizer.index_word.get(predicted_token, '')
+    for _ in range(num_words):
+        predicted_probs = model.predict(input_sequence, verbose=0)[0]
+        predicted_probs = predicted_probs / temperature
+        predicted_probs = predicted_probs / np.sum(predicted_probs)
+        predicted_token = np.random.choice(range(vocab_size), p=predicted_probs)
 
-    # Append the generated word to the generated text
-    generated_text += " " + output_word
+        output_word = tokenizer.index_word.get(predicted_token, '')
+        generated_text += " " + output_word
 
-    # Update the input sequence with the generated word
-    token_list = token_list[0].tolist()  # Convert the token_list to a regular list
-    token_list.append(predicted_token)  # Append the generated word to the input sequence
-    token_list = pad_sequences([token_list], maxlen=max_length, padding='pre')
+        input_sequence = np.append(input_sequence, [[predicted_token]], axis=1)
+        input_sequence = input_sequence[:, -max_length:]
 
+    return generated_text
+
+# Generate text
+seed_text = "Hey"
+num_words = 20
+temperature = 0.8  # Adjust the temperature for diversity (higher value = more diverse)
+generated_text = generate_text(seed_text, num_words, temperature)
 print(generated_text)
