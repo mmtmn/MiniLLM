@@ -36,7 +36,7 @@ for i, seq in enumerate(sequences):
         y_train[i, seq[j]] = 1
 
 # Train the model
-model.fit(x_train, y_train, batch_size=128, epochs=200)  # Increased number of epochs
+model.fit(x_train, y_train, batch_size=128, epochs=20)  # Increased number of epochs
 
 # Generate text using the trained model
 def generate_text(seed_text, num_words, temperature=1.0):
