@@ -1,6 +1,8 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Embedding
+from keras_preprocessing.text import Tokenizer
+from keras_preprocessing.sequence import pad_sequences
 
 # Define the model hyperparameters
 vocab_size = 5000  # Maximum vocabulary size
@@ -10,7 +12,7 @@ lstm_units = 128   # Number of LSTM units
 
 # Define the model architecture
 model = Sequential([
-    Embedding(vocab_size, embedding_size, input_length=max_length),
+    Embedding(vocab_size, embedding_size, input_shape=(max_length,)),
     LSTM(lstm_units),
     Dense(vocab_size, activation='softmax')
 ])
@@ -19,15 +21,20 @@ model = Sequential([
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 # Prepare the training data
-texts = [...]  # List of text sequences
+texts = [
+    "The quick brown fox jumps over the lazy dog.",
+    "The lazy dog sleeps all day long.",
+    "The quick brown fox is very agile and fast.",
+    # Add more text sequences here
+]
 tokenizer = Tokenizer(num_words=vocab_size)
 tokenizer.fit_on_texts(texts)
 sequences = tokenizer.texts_to_sequences(texts)
 x_train = pad_sequences(sequences, maxlen=max_length)
 y_train = np.zeros((len(sequences), vocab_size))
-for i, sequence in enumerate(sequences):
-    for j in range(1, len(sequence)):
-        y_train[i, sequence[j]] = 1
+for i, seq in enumerate(sequences):
+    for j in range(1, len(seq)):
+        y_train[i, seq[j]] = 1
 
 # Train the model
 model.fit(x_train, y_train, batch_size=128, epochs=10)
