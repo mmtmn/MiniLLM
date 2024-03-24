@@ -6,6 +6,8 @@ from keras_preprocessing.sequence import pad_sequences
 from datasets import load_dataset
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping
+from keras.regularizers import l2
+
 
 # Load the HelpSteer dataset
 ds = load_dataset("nvidia/HelpSteer")
@@ -24,9 +26,9 @@ val_prompts, val_responses = preprocess_data(val_data)
 # Define the model hyperparameters
 vocab_size = 10000
 max_length = 100
-embedding_size = 128
-lstm_units = 256
-dropout_rate = 0.2
+embedding_size = 64  # Reduced embedding size
+lstm_units = 128  # Reduced LSTM units
+dropout_rate = 0.3  # Increased dropout rate
 
 # Prepare the training data
 tokenizer = Tokenizer(num_words=vocab_size)
@@ -46,12 +48,11 @@ for i, seq in enumerate(val_sequences):
     for j in range(1, len(seq)):
         y_val[i, seq[j]] = 1
 
-# Define the model architecture
 model = Sequential([
     Embedding(vocab_size, embedding_size, input_shape=(max_length,)),
-    LSTM(lstm_units, return_sequences=True),
+    LSTM(lstm_units, return_sequences=True, kernel_regularizer=l2(0.01), recurrent_regularizer=l2(0.01)),
     Dropout(dropout_rate),
-    LSTM(lstm_units),
+    LSTM(lstm_units, kernel_regularizer=l2(0.01), recurrent_regularizer=l2(0.01)),
     Dropout(dropout_rate),
     Dense(vocab_size, activation='softmax')
 ])
