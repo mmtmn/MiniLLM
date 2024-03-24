@@ -7,6 +7,7 @@ from datasets import load_dataset
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping
 from keras.regularizers import l2
+import pickle
 
 
 # Load the HelpSteer dataset
@@ -58,16 +59,20 @@ model = Sequential([
 ])
 
 # Compile the model
-model.compile(loss='categorical_crossentropy', optimizer=Adam(0.0001))
+model.compile(loss='categorical_crossentropy', optimizer=Adam(0.00001))
 
 # Define early stopping callback
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
 # Train the model
-model.fit(x_train, y_train, batch_size=128, epochs=50, validation_data=(x_val, y_val), callbacks=[early_stopping])
+model.fit(x_train, y_train, batch_size=128, epochs=2, validation_data=(x_val, y_val), callbacks=[early_stopping])
 
 # Save the trained model
 model.save("helpsteer_model.h5")
+
+# Save the tokenizer
+with open('tokenizer.pickle', 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # Generate text using the trained model
 def generate_text(prompt, num_words, temperature=1.0, model=None):
@@ -85,9 +90,9 @@ def generate_text(prompt, num_words, temperature=1.0, model=None):
         input_sequence = input_sequence[:, -max_length:]
     return generated_text.strip()
 
-# Generate text based on a prompt
-prompt = "What are the three most important things to consider when deciding what technology to use to build an assist device to help an elderly person with basic needs?"
-num_words = 50
+# Generate text based on a simpler prompt
+prompt = "What is the most important thing to consider when building an assist device for the elderly?"
+num_words = 10
 temperature = 0.8
 generated_response = generate_text(prompt, num_words, temperature, model)
 print("Prompt:", prompt)
@@ -97,10 +102,14 @@ print("Generated Response:", generated_response)
 from keras.models import load_model
 loaded_model = load_model("helpsteer_model.h5")
 
-# Generate text based on a prompt
-prompt = "What are the three most important things to consider when deciding what technology to use to build an assist device to help an elderly person with basic needs?"
-num_words = 50
-temperature = 0.8
+# Print the model summary
+loaded_model.summary()
+
+# Load the tokenizer
+with open('tokenizer.pickle', 'rb') as handle:
+    loaded_tokenizer = pickle.load(handle)
+
+# Generate text based on the simpler prompt using the loaded model and tokenizer
 generated_response = generate_text(prompt, num_words, temperature, loaded_model)
 print("Prompt:", prompt)
 print("Generated Response:", generated_response)
