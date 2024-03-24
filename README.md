@@ -1,85 +1,80 @@
-# MiniLLM
+Sure, here's a README.md file for your Mini LLM project, formatted for GitHub:
 
-MiniLLM is a simple and lightweight Language Model (LM) implemented in Python using the Keras library. It is designed to be trained on a laptop with moderate computational power, making it accessible for experimentation and learning purposes.
+```markdown
+# Mini LLM
+
+Mini LLM is a lightweight language model built using Keras and LSTM (Long Short-Term Memory) networks. This project demonstrates a basic implementation of a text generation model using the HelpSteer dataset. It's designed to provide a foundational understanding of how language models can be trained and used for generating text.
 
 ## Features
 
-- Basic Language Model architecture using LSTM and Embedding layers
-- Trainable on a laptop with moderate computational power
-- Generates text based on the trained model
-- Customizable hyperparameters for experimentation
-
-## Requirements
-
-- Python 3.x
-- Keras
-- NumPy
+- Uses LSTM networks for text generation.
+- Implements a simple preprocessing pipeline for text data.
+- Employs EarlyStopping to prevent overfitting.
+- Includes a mechanism for saving and loading both the model and tokenizer.
+- Customizable text generation with temperature setting for creativity control.
 
 ## Installation
 
-1. Clone the repository:
+Before running Mini LLM, ensure you have the following prerequisites installed:
+- Python 3.x
+- Numpy
+- Keras
+- TensorFlow
+- HuggingFace's `datasets` library
 
-```
-git clone https://github.com/your-username/MiniLLM.git
-```
+Use the following command to install required packages:
 
-2. Install the required dependencies:
-
-```
-pip install -r requirements.txt
+```bash
+pip install numpy keras tensorflow datasets
 ```
 
 ## Usage
 
-1. Prepare your training data:
-   - Create a list of text sequences and assign it to the `texts` variable in the code.
+### Training the Model
 
-2. Customize the model hyperparameters (optional):
-   - Modify the values of `vocab_size`, `max_length`, `embedding_size`, and `lstm_units` according to your requirements.
+Run the provided Python script to train the model. The script includes data loading, preprocessing, model training, and saving the trained model and tokenizer.
 
-3. Train the model:
-   - Run the script to train the model on your training data.
+### Generating Text
 
-4. Generate text:
-   - Provide a seed text by assigning it to the `seed_text` variable in the code.
-   - Run the script to generate text based on the trained model.
-
-## Example
+After training, you can use the `generate_text` function to generate text based on a given prompt. Example usage:
 
 ```python
-# Prepare the training data
-texts = [
-    "The quick brown fox jumps over the lazy dog.",
-    "The lazy dog sleeps all day long.",
-    "The quick brown fox is very agile and fast."
-]
-
-# Train the model
-model.fit(x_train, y_train, batch_size=128, epochs=10)
-
-# Generate text using the trained model
-seed_text = "The quick brown fox"
-generated_text = generate_text(model, tokenizer, seed_text, max_length, num_words=20)
-print(generated_text)
+prompt = "Enter your prompt here"
+num_words = 20
+temperature = 0.8
+print(generate_text(prompt, num_words, temperature, model))
 ```
 
-## Limitations
+### Loading the Model
 
-- The generated text may not be highly coherent or meaningful due to the simplicity of the model architecture and limited training data.
-- The model's performance depends on the quality and diversity of the training data.
-- The model may require fine-tuning and hyperparameter optimization for better results.
+You can also load the saved model and tokenizer to generate text without needing to retrain:
+
+```python
+from keras.models import load_model
+model = load_model("path_to_saved_model.h5")
+with open('tokenizer.pickle', 'rb') as handle:
+    tokenizer = pickle.load(handle)
+
+print(generate_text(prompt, num_words, temperature, model))
+```
+
+## Dataset
+
+This model uses the `nvidia/HelpSteer` dataset from HuggingFace's datasets library.
 
 ## Contributing
 
-Contributions are welcome! If you have any ideas, suggestions, or improvements, please open an issue or submit a pull request.
+Contributions, issues, and feature requests are welcome. Feel free to check [issues page](your_issues_link_here) if you want to contribute.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Acknowledgments
+## Contact
 
-- The Keras library for providing the building blocks for the neural network model.
-- The open-source community for their valuable contributions and inspiration.
+Your Name - [YourEmail@example.com](mailto:YourEmail@example.com)
 
-Feel free to customize the README file based on your specific project details, add more sections if needed, and provide clear instructions for users to understand and use your MiniLLM implementation.
+Project Link: [https://github.com/your_username/Mini-LLM](https://github.com/your_username/Mini-LLM)
+```
+
+Feel free to adjust the content to better fit your project details or personal information.
