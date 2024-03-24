@@ -58,23 +58,4 @@ with open('tokenizer.pickle', 'rb') as handle:
 print(generate_text(prompt, num_words, temperature, model))
 ```
 
-## Dataset
-
-This model uses the `nvidia/HelpSteer` dataset from HuggingFace's datasets library.
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome. Feel free to check [issues page](your_issues_link_here) if you want to contribute.
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Your Name - [YourEmail@example.com](mailto:YourEmail@example.com)
-
-Project Link: [https://github.com/your_username/Mini-LLM](https://github.com/your_username/Mini-LLM)
-```
-
 Feel free to adjust the content to better fit your project details or personal information.
