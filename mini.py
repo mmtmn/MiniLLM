@@ -57,7 +57,7 @@ model = Sequential([
 ])
 
 # Compile the model
-model.compile(loss='categorical_crossentropy', optimizer=Adam(lr=0.001))
+model.compile(loss='categorical_crossentropy', optimizer=Adam(0.001))
 
 # Define early stopping callback
 early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
