@@ -54,5 +54,3 @@ with open('tokenizer.pickle', 'rb') as handle:
 
 print(generate_text(prompt, num_words, temperature, model))
 ```
-
-Feel free to adjust the content to better fit your project details or personal information.
