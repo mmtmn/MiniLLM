@@ -1,6 +1,3 @@
-Sure, here's a README.md file for your Mini LLM project, formatted for GitHub:
-
-```markdown
 # Mini LLM
 
 Mini LLM is a lightweight language model built using Keras and LSTM (Long Short-Term Memory) networks. This project demonstrates a basic implementation of a text generation model using the HelpSteer dataset. It's designed to provide a foundational understanding of how language models can be trained and used for generating text.
